@@ -1,3 +1,4 @@
+
 <div class="span10">
   <% if current_user.is_parent? && @students.size > 0 %>
     <div class= "span4">
@@ -12,10 +13,15 @@
     
   <div class="move_right">
     Select Year:
-    <%= select_year(Date.today, :start_year => Date.today.year-2, :end_year => Date.today.year) %></br>
-    Select Month(s):
-    From: <%= select_month(Date.today)%>
-    To: <%= select_month(Date.today) %>
+    <%= form_tag(users_path, :method => :get) do %>
+      <%= select_year(@year, {:start_year => Date.today.year-2, :end_year => Date.today.year} ) %>
+      
+      </br>
+      Select Month(s):
+      From: <%= select_month(@start_month, :prefix => 'start') %>
+      To: <%= select_month(@end_month, :prefix => 'end') %>
+      <%= submit_tag "Submit", :class => "btn" %>
+    <% end %>
   </div>
 </div>    
 <div class="span10">
@@ -53,15 +59,13 @@
         <th>Average</th>
       </tr>
       </thead>
-      <tbody> 
-        <%if @subject_average.size > 0%>
-          <% @subject_average.each do |subject,average| %>
-            <tr>
-              <td><lable><%= subject %></lable></td>
-              <td><lable><%= average %></lable></td>
-            </tr>
-          <%end%>
-        <% end %>
+      <tbody>
+        <%@subject_average.each do |subject,average|%> 
+          <tr>
+            <td><lable><%= subject %></lable></td>
+            <td><lable><%= average %></lable></td>
+          </tr>
+        <%end%>  
       </tbody>
     </table>
   <div id="overall_average" class="move_down">
@@ -70,9 +74,6 @@
 <div id="chart_div" style="width: 900px; height: 500px;"></div>
 </div>
 <!--div id="myfirstchart" class="span5" style="height: 250px;"></div-->
-
-
-
 
 
 
@@ -97,4 +98,4 @@
   }
 </script>
 
-    
+

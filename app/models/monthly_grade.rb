@@ -1,5 +1,5 @@
 class MonthlyGrade < ActiveRecord::Base
-  attr_accessible :grade, :record_date, :student_from_excel_id, :subject_name, :month
+  attr_accessible :grade, :record_date, :student_from_excel_id, :subject_name, :month, :year
   
   def self.uniq_grade grades
     grades.map(&:subject_name).uniq

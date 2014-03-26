@@ -5,12 +5,22 @@ class UsersController < ApplicationController
   end
   
   def index
+    @year = Time.new.year
     if !current_user.is_professor?
       if current_user.is_parent?
         @students = Parent.find_by_user_id(current_user.id).student_from_excels
         @grades = @students.first.monthly_grades
         subjects = MonthlyGrade.uniq_grade @grades
-        @subject_average = subject_average(subjects, @grades)
+        if params[:date] == nil
+          monthly_grade = MonthlyGrade.where('year = ? and month >= ? and month <= ?', @year, 1, 12)
+          @subject_average = subject_average(monthly_grade.map(&:subject_name).uniq, monthly_grade )
+        else
+          @year = params[:date][:year].to_i
+          @start_month = params[:start][:month].to_i
+          @end_month = params[:end][:month].to_i
+          monthly_grade = MonthlyGrade.where('year = ? and month >= ? and month <= ?', @year, @start_month, @end_month)
+          @subject_average = subject_average(monthly_grade.map(&:subject_name).uniq, monthly_grade )
+        end
         all_months = @grades.map(&:month).uniq
         @month_average = month_average(all_months, @grades)
       end  
@@ -21,6 +31,7 @@ class UsersController < ApplicationController
         @subject_average = subject_average(subjects, @grades)
       end
       @average = calculate_average @grades
+      
     else
       @grades = GradeFromExcel.where(:professor_email => current_user.email)   
     end  
